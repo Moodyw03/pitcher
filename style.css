@@ -46,6 +46,7 @@ input[type="file"], .btn {
 }
 .code-box {
     border: 1px solid #ccc;
+    border-radius: 5%;
     padding: 10px;
     margin-bottom: 10px;
     /* Linear gradient from top to bottom */
