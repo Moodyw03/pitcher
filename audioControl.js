@@ -198,3 +198,9 @@ downloadLink.click();
 document.body.removeChild(downloadLink);
 URL.revokeObjectURL(url);
 }
+
+const toWav = require('audiobuffer-to-wav');
+// Assuming 'audioBuffer' is an instance of AudioBuffer you want to convert
+const wavBlob = toWav(audioBuffer);
+// Now 'wavBlob' contains the WAV file data
+
