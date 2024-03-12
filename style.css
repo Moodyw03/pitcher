@@ -35,20 +35,16 @@ body, html {
     justify-content: center;
 }
 
-input[type="range"] {
+input[type="range"], input[type="file"], .btn {
     width: 100%;
     max-width: 400px;
     margin: 10px 0;
 }
 
-input[type="file"], .btn {
-    margin: 10px 0;
-}
 .code-box {
     border: 1px solid #ccc;
     border-radius: 5%;
     padding: 10px;
     margin-bottom: 10px;
-    /* Linear gradient from top to bottom */
-    background-image: linear-gradient(to bottom, #f1f1f1, #151737);
+    background-image: linear-gradient(to bottom, #41408e, #9f9fb4);
 }
