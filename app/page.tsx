@@ -14,40 +14,43 @@ export default function Home() {
         </div>
 
         <div className="space-y-3">
-          <Button variant="outline" className="w-full">
+          <Button variant="secondary" className="w-full">
             <Play className="mr-2 h-4 w-4" /> Play
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="secondary" className="w-full">
             <Pause className="mr-2 h-4 w-4" /> Stop
           </Button>
         </div>
 
-        <Button variant="default" className="w-full">
-          <Download className="mr-2 h-4 w-4" /> Download
-        </Button>
-
-        {/* 
-        <input type="file" id="audioFile" accept="audio/*" />
-        <button id="playButton" className="btn btn-light">
-            Play
-          </button>
-          <button id="stopButton" className="btn btn-light">
-            Stop
-          </button>
-        <div>
-          <input
-            type="range"
-            id="rateControl"
-            min="0.5"
-            max="2"
-            value="1"
-            step="0.05"
-          />
+        <div className="relative">
+          <div className="absolute transition-all duration-1000 opacity-75 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+          <Button className="w-full relative">
+            <Download className="mr-2 h-4 w-4" /> Download
+          </Button>
         </div>
-        <button id="downloadButton" className="btn btn-dark">
-            Download
-        </button> 
-        */}
+
+        {/* <div class="background-image">
+          <div class="code-box">
+            <div class="control-container">
+              <input type="file" id="audioFile" accept="audio/*">
+              <button id="playButton"
+                class="btn btn-light">Play</button>
+              <button id="stopButton" class="btn btn-light">Stop</button>
+              <div>
+                <style>
+                  .center {
+                      text-align: center;
+                      color: white;
+                  }
+                </style>
+                <input type="range" id="rateControl" min="0.5" max="2"
+                  value="1" step="0.05">
+              </div>
+              <button id="downloadButton"
+                class="btn btn-dark">Download</button>
+            </div>
+          </div>
+        </div> */}
       </div>
     </div>
   );
