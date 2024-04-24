@@ -33,13 +33,7 @@ export default function RootLayout({
         }}
       >
         <Nav />
-        <main
-          style={{
-            height: "calc(100vh - 4rem)",
-          }}
-        >
-          {children}
-        </main>
+        <main className="h-screen">{children}</main>
       </body>
     </html>
   );
