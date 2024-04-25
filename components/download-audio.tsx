@@ -28,9 +28,17 @@ export default function DownloadAudio({ audioFile, rate }: Props) {
       return;
     }
 
+    const fileExtension = audioFile.name.split(".").pop();
+    if (!fileExtension) {
+      alert("Invalid file format.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("audioFile", audioFile);
     formData.append("speedFactor", speedFactor.toString());
+
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -53,7 +61,8 @@ export default function DownloadAudio({ audioFile, rate }: Props) {
           a.href = url;
           // the filename you want
           a.download =
-            audioFile.name.replace(/\.[^/.]+$/, "") + "-processed.mp3";
+            audioFile.name.replace(/\.[^/.]+$/, "") +
+            `-processed.${fileExtension}`;
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
@@ -68,6 +77,8 @@ export default function DownloadAudio({ audioFile, rate }: Props) {
     } catch (error) {
       console.error("Error:", error);
       alert("Error uploading file.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
