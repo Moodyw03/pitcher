@@ -23,7 +23,7 @@ export default function DownloadAudio({ audioFile, rate }: Props) {
       alert("Please upload a file.");
       return;
     }
-    if (speedFactor <= 0.5) {
+    if (speedFactor < 0.5) {
       alert("Please enter a valid speed factor (greater than 0.5).");
       return;
     }
