@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Howl } from "howler";
+import * as Tone from "tone";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,69 +11,51 @@ import DownloadAudio from "./download-audio";
 
 export default function AudioControls() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [audio, setAudio] = useState<Howl | null>(null);
+  const [player, setPlayer] = useState<Tone.Player | null>(null);
   const [rate, setRate] = useState([1]);
-  const audioRef = useRef<Howl | null>(null);
-
   const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    const newPlayer = new Tone.Player().toDestination();
+    newPlayer.onstop = () => {
+      setIsPlaying(false);
+    };
+
+    setPlayer(newPlayer);
+
+    return () => {
+      newPlayer.dispose();
+    };
+  }, []);
 
   function handleOnFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    const fileExtension = file.name.split(".").pop();
-    if (!fileExtension) return;
 
     setAudioFile(file);
-
-    // Cleanup the old Howl object if it exists
-    if (audioRef.current) {
-      audioRef.current.unload();
+    if (player) {
+      player.load(url);
     }
-
-    // Create a new Howl object for the new file
-    const newAudio = new Howl({
-      src: [url],
-      format: [fileExtension],
-      html5: true, // Force to use HTML5 Audio
-      preload: true,
-      onplay: () => {
-        setIsPlaying(true);
-        console.log("Audio is playing!");
-      },
-      onload: () => console.log("Audio loaded successfully!"),
-      onend: () => {
-        setIsPlaying(false);
-        console.log("Audio has ended!");
-      },
-      onloaderror: (id, err) => console.log("Failed to load audio:", err),
-      onplayerror: (id, err) => console.log("Error during playback:", err),
-    });
-
-    // Store the new Howl object in the ref
-    audioRef.current = newAudio;
-    setAudio(newAudio);
-    setRate([1]);
   }
 
   function handlePlay() {
-    if (audioRef.current) {
-      audioRef.current.play();
+    if (player && !isPlaying) {
+      player.start();
+      setIsPlaying(true);
     }
   }
 
   function handleStop() {
-    if (audioRef.current) {
-      audioRef.current.stop();
-      setIsPlaying(false);
+    if (player && isPlaying) {
+      player.stop();
     }
   }
 
   function handleChangeRate(value: number[]) {
     setRate(value);
-    const rate = value[0];
-    if (audioRef.current) {
-      audioRef.current.rate(rate);
+    if (player) {
+      player.playbackRate = value[0];
     }
   }
 
