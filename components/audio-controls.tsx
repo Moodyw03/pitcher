@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Howl } from "howler";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,8 @@ export default function AudioControls() {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
+    const fileExtension = file.name.split(".").pop();
+    if (!fileExtension) return;
 
     setAudioFile(file);
 
@@ -32,7 +34,9 @@ export default function AudioControls() {
     // Create a new Howl object for the new file
     const newAudio = new Howl({
       src: [url],
+      format: [fileExtension],
       html5: true, // Force to use HTML5 Audio
+      preload: true,
       onplay: () => {
         setIsPlaying(true);
         console.log("Audio is playing!");

@@ -25,13 +25,15 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "relative min-h-screen bg-background font-sans antialiased bg-cover bg-center",
           fontSans.variable
         )}
         style={{
           backgroundImage: "url('/background.jpg')",
         }}
       >
+        {/* <div className="absolute w-full h-full bg-black opacity-20"></div> */}
+
         <Nav />
         <main className="h-screen">{children}</main>
       </body>
