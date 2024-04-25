@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import * as Tone from "tone";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import DownloadAudio from "./download-audio";
 import { Download } from "lucide-react";
 
 export default function AudioControls() {
@@ -62,7 +61,7 @@ export default function AudioControls() {
   async function handleStop() {
     if (player && isPlaying) {
       player.stop();
-      if (recorder) {
+      if (recorder && recorder.state === "started") {
         recorder.pause();
       }
     }
@@ -70,23 +69,24 @@ export default function AudioControls() {
 
   function handleChangeRate(value: number[]) {
     setRate(value);
-    if (player) {
-      player.playbackRate = value[0];
-    }
+    if (player) player.playbackRate = value[0];
   }
 
   async function handleDownload() {
-    if (recorder) {
-      const recording = await recorder.stop();
-      const url = URL.createObjectURL(recording);
+    if (!recorder) return alert("Nothing recorded.");
 
-      const a = document.createElement("a");
-      a.style.display = "none";
-      a.href = url;
-      a.download = audioFile?.name + "-processed.webm";
-      document.body.appendChild(a);
-      a.click();
-    }
+    if (recorder.state === "stopped")
+      return alert("Nothing recorded. Please play the audio to record.");
+
+    const recording = await recorder.stop();
+    const url = URL.createObjectURL(recording);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = audioFile?.name + "-processed.webm";
+    document.body.appendChild(a);
+    a.click();
   }
 
   return (
@@ -108,7 +108,7 @@ export default function AudioControls() {
           defaultValue={[1]}
           min={0.5}
           max={2}
-          step={0.05}
+          step={0.01}
           value={rate}
           onValueChange={handleChangeRate}
         />
@@ -137,7 +137,6 @@ export default function AudioControls() {
           <Download className="mr-2 h-4 w-4" /> Download
         </Button>
       </div>
-      {/* <DownloadAudio audioFile={audioFile} rate={rate} /> */}
     </div>
   );
 }
