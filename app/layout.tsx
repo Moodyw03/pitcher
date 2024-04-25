@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
@@ -32,8 +33,7 @@ export default function RootLayout({
           backgroundImage: "url('/background.jpg')",
         }}
       >
-        {/* <div className="absolute w-full h-full bg-black opacity-20"></div> */}
-
+        <Toaster />
         <Nav />
         <main className="h-screen">{children}</main>
       </body>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import * as Tone from "tone";
 
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,11 @@ export default function AudioControls() {
       recorder.start();
       player.start();
       setIsPlaying(true);
+
+      toast.success("Recording started", {
+        icon: "🎙️",
+        className: "text-sm",
+      });
     }
   }
 
@@ -63,6 +69,11 @@ export default function AudioControls() {
       player.stop();
       if (recorder && recorder.state === "started") {
         recorder.pause();
+        // pause and download
+        toast.success("Recording paused.", {
+          icon: "🎤",
+          className: "text-sm",
+        });
       }
     }
   }
@@ -73,10 +84,20 @@ export default function AudioControls() {
   }
 
   async function handleDownload() {
-    if (!recorder) return alert("Nothing recorded.");
+    if (!recorder)
+      return toast.error("No audio recorded.", {
+        className: "text-sm",
+      });
 
     if (recorder.state === "stopped")
-      return alert("Nothing recorded. Please play the audio to record.");
+      return toast.error("Nothing recorded. Play the audio to record.", {
+        className: "text-sm",
+      });
+
+    toast.success(" Processing audio...", {
+      icon: "⏳",
+      className: "text-sm",
+    });
 
     const recording = await recorder.stop();
     const url = URL.createObjectURL(recording);
