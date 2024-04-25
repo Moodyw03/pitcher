@@ -8,23 +8,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import DownloadAudio from "./download-audio";
+import { Download } from "lucide-react";
 
 export default function AudioControls() {
-  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [player, setPlayer] = useState<Tone.Player | null>(null);
+  const [recorder, setRecorder] = useState<Tone.Recorder | null>(null);
+
+  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [rate, setRate] = useState([1]);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const newPlayer = new Tone.Player().toDestination();
+    const newRecorder = new Tone.Recorder();
     newPlayer.onstop = () => {
       setIsPlaying(false);
     };
 
+    newPlayer.connect(newRecorder);
+
     setPlayer(newPlayer);
+    setRecorder(newRecorder);
 
     return () => {
       newPlayer.dispose();
+      newRecorder.dispose();
     };
   }, []);
 
@@ -37,18 +45,26 @@ export default function AudioControls() {
     if (player) {
       player.load(url);
     }
+
+    if (recorder?.state === "started") recorder.stop();
+    if (player?.state === "started") player.stop();
   }
 
-  function handlePlay() {
-    if (player && !isPlaying) {
+  async function handlePlay() {
+    if (player && recorder && !isPlaying) {
+      if (recorder?.state === "paused") await recorder.stop(); // Stop recording if paused
+      recorder.start();
       player.start();
       setIsPlaying(true);
     }
   }
 
-  function handleStop() {
+  async function handleStop() {
     if (player && isPlaying) {
       player.stop();
+      if (recorder) {
+        recorder.pause();
+      }
     }
   }
 
@@ -56,6 +72,20 @@ export default function AudioControls() {
     setRate(value);
     if (player) {
       player.playbackRate = value[0];
+    }
+  }
+
+  async function handleDownload() {
+    if (recorder) {
+      const recording = await recorder.stop();
+      const url = URL.createObjectURL(recording);
+
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = audioFile?.name + "-processed.webm";
+      document.body.appendChild(a);
+      a.click();
     }
   }
 
@@ -87,7 +117,7 @@ export default function AudioControls() {
         <Button
           variant="secondary"
           className="w-full"
-          disabled={isPlaying}
+          disabled={!audioFile || !player || !recorder || isPlaying}
           onClick={handlePlay}
         >
           Play
@@ -97,7 +127,17 @@ export default function AudioControls() {
         </Button>
       </div>
 
-      <DownloadAudio audioFile={audioFile} rate={rate} />
+      <div className="relative">
+        <div className="absolute transition-all duration-1000 opacity-75 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+        <Button
+          className="w-full relative"
+          disabled={!audioFile || !recorder}
+          onClick={handleDownload}
+        >
+          <Download className="mr-2 h-4 w-4" /> Download
+        </Button>
+      </div>
+      {/* <DownloadAudio audioFile={audioFile} rate={rate} /> */}
     </div>
   );
 }
